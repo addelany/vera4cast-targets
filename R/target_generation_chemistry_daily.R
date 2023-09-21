@@ -58,6 +58,6 @@ target_generation_chemistry_daily <- function(current_data_file, historic_data_f
 
 # Using the function with the EDI address for data
 # target_generation_chemistry_daily(
-#  current_data_file=NULL, 
-#  historic_data_file="https://pasta.lternet.edu/package/data/eml/edi/199/11/509f39850b6f95628d10889d66885b76") 
+#  current_data_file=NULL,
+#  historic_data_file="https://pasta.lternet.edu/package/data/eml/edi/199/11/509f39850b6f95628d10889d66885b76")
 
