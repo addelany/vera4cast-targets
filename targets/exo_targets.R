@@ -10,8 +10,14 @@ bvr_files <- c("https://raw.githubusercontent.com/FLARE-forecast/BVRE-data/bvre-
 
 exo_daily <- target_generation_exo_daily(fcr_files, bvr_files)
 
-s3 <- arrow::s3_bucket("bio230121-bucket01", endpoint_override = "renc.osn.xsede.org")
-s3$CreateDir("vera4cast/targets/daily")
+#Add in a depth column
+exo_daily <- exo_daily |> 
+  mutate(duration = "P1D",
+         datetime = lubridate::as_datetime(datetime),
+         project_id = "vera4cast")
 
-s3 <- arrow::s3_bucket("bio230121-bucket01/vera4cast/targets/daily", endpoint_override = "renc.osn.xsede.org")
-arrow::write_csv_arrow(exo_daily, sink = s3$path("daily-targets.csv.gz"))
+s3 <- arrow::s3_bucket("bio230121-bucket01", endpoint_override = "renc.osn.xsede.org")
+s3$CreateDir("vera4cast/targets/duration=P1D")
+
+s3 <- arrow::s3_bucket("bio230121-bucket01/vera4cast/targets/duration=P1D", endpoint_override = "renc.osn.xsede.org")
+arrow::write_csv_arrow(exo_daily, sink = s3$path("P1D-targets.csv.gz"))

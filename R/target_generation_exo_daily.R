@@ -39,30 +39,30 @@ target_generation_exo_daily <- function (fcr_files,
   # FCR
   fcr_sum <- fcr_df |>
     dplyr::group_by(Date, site_id) |> 
-    dplyr::summarise(Temp_C = mean(EXOTemp_C_1, na.rm = T),
-                     Cond_uScm = mean(EXOCond_uScm_1, na.rm = T),
-                     SpCond_uScm = mean(EXOSpCond_uScm_1, na.rm = T),
-                     DOsat_percent = mean(EXODOsat_percent_1, na.rm = T),
-                     DO_mgL = mean(EXODO_mgL_1, na.rm = T),
-                     Chla_ugL = mean(EXOChla_ugL_1, na.rm = T),
-                     fDOM_QSU = mean(EXOfDOM_QSU_1, na.rm = T),
-                     Turbidity_FNU = mean(EXOTurbidity_FNU_1, na.rm = T),
-                     Bloom_binary = as.numeric(mean(Chla_ugL, na.rm = T)>20)#,
+    dplyr::summarise(Temp_C_mean = mean(EXOTemp_C_1, na.rm = T),
+                     Cond_uScm_mean = mean(EXOCond_uScm_1, na.rm = T),
+                     SpCond_uScm_mean = mean(EXOSpCond_uScm_1, na.rm = T),
+                     DOsat_percent_mean = mean(EXODOsat_percent_1, na.rm = T),
+                     DO_mgL_mean = mean(EXODO_mgL_1, na.rm = T),
+                     Chla_ugL_mean = mean(EXOChla_ugL_1, na.rm = T),
+                     fDOM_QSU_mean = mean(EXOfDOM_QSU_1, na.rm = T),
+                     Turbidity_FNU_mean = mean(EXOTurbidity_FNU_1, na.rm = T),
+                     Bloom_binary_mean = as.numeric(mean(Chla_ugL_mean, na.rm = T)>20)#,
                      #EXODepth_m = mean(EXODepth_m, na.rm = T) #could use this line to have changing depths based on the exo depth sensor
                      )
   
   # BVR
   bvr_sum <- bvr_df |> 
     dplyr::group_by(Date, site_id) |> #daily mean
-    dplyr::summarise(Temp_C = mean(EXOTemp_C_1.5, na.rm = T),
-                     Cond_uScm = mean(EXOCond_uScm_1.5, na.rm = T),
-                     SpCond_uScm = mean(EXOSpCond_uScm_1.5, na.rm = T),
-                     DOsat_percent = mean(EXODOsat_percent_1.5, na.rm = T),
-                     DO_mgL = mean(EXODO_mgL_1.5, na.rm = T),
-                     Chla_ugL = mean(EXOChla_ugL_1.5, na.rm = T),
-                     fDOM_QSU = mean(EXOfDOM_QSU_1.5, na.rm = T),
-                     Turbidity_FNU = mean(EXOTurbidity_FNU_1.5, na.rm = T),
-                     Bloom_binary = as.numeric(mean(Chla_ugL, na.rm = T)>20)#,
+    dplyr::summarise(Temp_C_mean = mean(EXOTemp_C_1.5, na.rm = T),
+                     Cond_uScm_mean = mean(EXOCond_uScm_1.5, na.rm = T),
+                     SpCond_uScm_mean = mean(EXOSpCond_uScm_1.5, na.rm = T),
+                     DOsat_percent_mean = mean(EXODOsat_percent_1.5, na.rm = T),
+                     DO_mgL_mean = mean(EXODO_mgL_1.5, na.rm = T),
+                     Chla_ugL_mean = mean(EXOChla_ugL_1.5, na.rm = T),
+                     fDOM_QSU_mean = mean(EXOfDOM_QSU_1.5, na.rm = T),
+                     Turbidity_FNU_mean = mean(EXOTurbidity_FNU_1.5, na.rm = T),
+                     Bloom_binary_mean = as.numeric(mean(Chla_ugL_mean, na.rm = T)>20)#,
                      #EXODepth_m = mean(EXODepth_m, na.rm = T)
     )
   
@@ -72,9 +72,9 @@ target_generation_exo_daily <- function (fcr_files,
   comb_sum <- fcr_sum |> 
     dplyr::bind_rows(bvr_sum) |> 
     dplyr::rename(datetime = Date) |> 
-    tidyr::pivot_longer(cols = Temp_C:Bloom_binary, names_to = "variable", values_to = "observation") |> 
+    tidyr::pivot_longer(cols = Temp_C_mean:Bloom_binary_mean, names_to = "variable", values_to = "observation") |> 
     dplyr::mutate(depth_m = ifelse(site_id == "fcre", 1.6, NA),
-                  depth_m = ifelse(site_id == "bvre", 1.5, NA)) |> 
+                  depth_m = ifelse(site_id == "bvre", 1.5, depth_m)) |> 
     #dplyr::rename(depth_m = EXODepth_m) |> 
     dplyr::select(datetime, site_id, depth_m, observation, variable) |> 
     dplyr::mutate(observation = ifelse(!is.finite(observation),NA,observation))
